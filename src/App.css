@@ -1,0 +1,656 @@
+.appShell {
+  position: relative;
+  width: 100%;
+  min-height: 100svh;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 48%, rgba(48, 121, 255, 0.16), transparent 34%),
+    radial-gradient(circle at 78% 20%, rgba(102, 214, 255, 0.1), transparent 24%),
+    #050914;
+  color: #f7fbff;
+}
+
+.brandRail {
+  position: fixed;
+  z-index: 10;
+  top: clamp(20px, 3vw, 40px);
+  left: clamp(20px, 4vw, 48px);
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  color: #f7fbff;
+  font-size: clamp(18px, 2.1vw, 28px);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0;
+  text-decoration: none;
+  text-transform: uppercase;
+  pointer-events: auto;
+}
+
+.brandMark {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(247, 251, 255, 0.78);
+  border-radius: 50%;
+  box-shadow:
+    inset 9px 0 0 rgba(90, 184, 255, 0.18),
+    0 0 22px rgba(90, 184, 255, 0.26);
+}
+
+.brandMark::before,
+.brandMark::after {
+  position: absolute;
+  content: "";
+  inset: 9px 6px;
+  border: 1px solid rgba(247, 251, 255, 0.68);
+  transform: skewX(-26deg) rotate(-8deg);
+}
+
+.brandMark::after {
+  inset: 13px 13px;
+  border: 0;
+  border-radius: 50%;
+  background: #f7fbff;
+  transform: none;
+}
+
+.globeStage {
+  position: absolute;
+  inset: 0;
+}
+
+.globeCanvas {
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+.globeTooltipWrapper {
+  pointer-events: none;
+}
+
+.globeTooltip {
+  min-width: 190px;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 4px;
+  background: rgba(7, 10, 16, 0.82);
+  color: #f7fbff;
+  box-shadow: 0 0 24px rgba(90, 184, 255, 0.12);
+  backdrop-filter: blur(14px);
+  transform: translate3d(0, -10px, 0);
+}
+
+.globeTooltip strong,
+.globeTooltip span {
+  display: block;
+}
+
+.globeTooltip strong {
+  margin-bottom: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.globeTooltip span {
+  color: #ffb4a8;
+  font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 10px;
+  line-height: 1.2;
+}
+
+.circuitDrawer {
+  position: fixed;
+  z-index: 12;
+  top: 0;
+  right: 0;
+  bottom: 56px;
+  width: min(34vw, 470px);
+  min-width: 380px;
+  display: flex;
+  flex-direction: column;
+  padding: 30px 28px 20px;
+  overflow-y: auto;
+  color: #f7fbff;
+  background: rgba(7, 10, 16, 0.78);
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(20px);
+  transform: translateX(100%);
+  transition: transform 220ms ease;
+}
+
+.circuitDrawer.isOpen {
+  transform: translateX(0);
+}
+
+.drawerTopRail {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(225, 6, 0, 0.95), rgba(225, 6, 0, 0.08));
+}
+
+.drawerHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 20px;
+}
+
+.drawerHeader h1 {
+  max-width: 14ch;
+  margin: 8px 0 8px;
+  font-size: clamp(28px, 2.7vw, 38px);
+  font-weight: 600;
+  line-height: 1.02;
+  letter-spacing: 0;
+}
+
+.drawerHeader p {
+  margin: 0;
+  color: #e9bcb5;
+  font-size: 19px;
+  line-height: 1.35;
+}
+
+.drawerKicker {
+  color: #ff2f45 !important;
+  font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 11px !important;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.iconButton {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #f7fbff;
+  cursor: pointer;
+}
+
+.iconButton:hover,
+.iconButton:focus-visible {
+  border-color: rgba(225, 6, 0, 0.72);
+  background: rgba(225, 6, 0, 0.12);
+  outline: none;
+}
+
+.closeButton span {
+  position: absolute;
+  top: 19px;
+  left: 11px;
+  width: 16px;
+  height: 2px;
+  background: currentColor;
+}
+
+.closeButton span:first-child {
+  transform: rotate(45deg);
+}
+
+.closeButton span:last-child {
+  transform: rotate(-45deg);
+}
+
+.circuitMetrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0 0 18px;
+}
+
+.circuitMetrics div {
+  min-width: 0;
+  padding: 14px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.045);
+  text-align: center;
+}
+
+.circuitMetrics dt,
+.characteristics h2,
+.phaseStub h2 {
+  margin: 0;
+  color: #c3c7cb;
+  font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.circuitMetrics dd {
+  margin: 10px 0 0;
+  overflow-wrap: anywhere;
+  color: #f7fbff;
+  font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.detailRows {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.detailRows div,
+.characteristics div {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 11px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  color: #d7dce8;
+  font-size: 14px;
+}
+
+.detailRows div:last-child,
+.characteristics div:last-child {
+  border-bottom: 0;
+}
+
+.detailRows strong,
+.characteristics strong {
+  color: #ffb4a8;
+  font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: right;
+}
+
+.tagList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 18px 0 24px;
+}
+
+.tagList span {
+  padding: 6px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  color: #d7dce8;
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 12px;
+  line-height: 1;
+}
+
+.drawerTabs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  margin: 0 -28px 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.drawerTabs button {
+  min-height: 46px;
+  padding: 0 8px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  color: #e9bcb5;
+  background: transparent;
+  font: inherit;
+  font-size: 13px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.drawerTabs button:hover,
+.drawerTabs button:focus-visible {
+  background: rgba(255, 255, 255, 0.06);
+  outline: none;
+}
+
+.drawerTabs button.isActive {
+  border-bottom-color: #e10600;
+  color: #f7fbff;
+  background: rgba(225, 6, 0, 0.15);
+}
+
+.drawerPanel {
+  padding-bottom: 20px;
+}
+
+.overviewCopy,
+.phaseStub {
+  margin: 0 0 20px;
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-left: 3px solid #e10600;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.03);
+  color: #f7fbff;
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+.characteristics {
+  margin-bottom: 22px;
+}
+
+.drawerActions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.drawerActions button {
+  min-height: 42px;
+  padding: 0 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 4px;
+  background: transparent;
+  color: #f7fbff;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.drawerActions button:last-child {
+  border-color: #e10600;
+  background: #e10600;
+}
+
+.drawerActions button:hover,
+.drawerActions button:focus-visible {
+  filter: brightness(1.14);
+  outline: 1px solid rgba(247, 251, 255, 0.32);
+}
+
+.phaseStub h2 {
+  margin-bottom: 12px;
+  color: #ff2f45;
+}
+
+.phaseStub p {
+  margin: 0;
+  color: #c3c7cb;
+}
+
+.stateBlock {
+  margin: 0 0 20px;
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-left: 3px solid rgba(255, 255, 255, 0.28);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.stateBlock h2,
+.drawerSection h2,
+.calendarCard span,
+.calendarCard dt,
+.aiInsightList h2 {
+  margin: 0;
+  color: #c3c7cb;
+  font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.stateBlock p {
+  margin: 12px 0 0;
+  color: #d7dce8;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.stateBlockLoading {
+  border-left-color: #5ab8ff;
+}
+
+.stateBlockError {
+  border-left-color: #e10600;
+}
+
+.stateBlock button {
+  min-height: 36px;
+  margin-top: 14px;
+  padding: 0 14px;
+  border: 1px solid #e10600;
+  border-radius: 4px;
+  background: transparent;
+  color: #f7fbff;
+  font: inherit;
+  cursor: pointer;
+}
+
+.drawerSection {
+  margin-bottom: 22px;
+}
+
+.dataTable,
+.barList {
+  margin-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dataTable div,
+.barList div {
+  display: grid;
+  align-items: center;
+  gap: 10px;
+  min-height: 38px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dataTable div {
+  grid-template-columns: 48px minmax(0, 1fr) 92px;
+}
+
+.dataTable span,
+.dataTable em,
+.barList span,
+.barList strong,
+.calendarCard dd,
+.aiMeta {
+  color: #d7dce8;
+  font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 12px;
+  font-style: normal;
+}
+
+.dataTable strong {
+  overflow: hidden;
+  color: #f7fbff;
+  font-size: 14px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.barList div {
+  grid-template-columns: 82px minmax(0, 1fr) 28px;
+}
+
+.barList i {
+  position: relative;
+  height: 5px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.barList i::after {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--bar-size);
+  content: "";
+  background: #e10600;
+}
+
+.compactRows {
+  margin-top: 12px;
+}
+
+.calendarCard {
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-left: 3px solid #e10600;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.calendarCard > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.calendarCard > div:first-child strong {
+  color: #ffb4a8;
+  font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.calendarCard h2 {
+  margin: 18px 0;
+  color: #f7fbff;
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.15;
+}
+
+.calendarCard dl {
+  display: grid;
+  gap: 0;
+  margin: 0;
+}
+
+.calendarCard dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 11px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.calendarCard dd {
+  margin: 0;
+  color: #ffb4a8;
+  text-align: right;
+}
+
+.aiMeta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+  color: #9aa4b2;
+}
+
+.aiInsightList {
+  display: grid;
+  gap: 12px;
+}
+
+.aiInsightList section {
+  padding: 14px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.aiInsightList p {
+  margin: 10px 0 0;
+  color: #f7fbff;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.bottomStatusBar {
+  position: fixed;
+  z-index: 14;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 10px clamp(18px, 3vw, 48px);
+  overflow-x: auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(14, 19, 31, 0.86);
+  backdrop-filter: blur(18px);
+  color: #d7dce8;
+  font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.bottomStatusBar strong {
+  color: #f7fbff;
+  font-weight: 500;
+}
+
+.copyright {
+  margin-right: auto;
+}
+
+.selectedStatus {
+  padding: 7px 8px;
+  border: 1px solid rgba(225, 6, 0, 0.28);
+  border-radius: 4px;
+  background: rgba(225, 6, 0, 0.08);
+  color: #d7dce8;
+  font: inherit;
+  cursor: pointer;
+}
+
+.selectedStatus strong {
+  color: #ffb4a8;
+}
+
+.selectedStatus:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.selectedStatus:not(:disabled):hover,
+.selectedStatus:not(:disabled):focus-visible {
+  border-color: rgba(225, 6, 0, 0.75);
+  outline: none;
+}
+
+.connectionStatus {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.connectionStatus i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #19c37d;
+  box-shadow: 0 0 12px rgba(25, 195, 125, 0.8);
+}
