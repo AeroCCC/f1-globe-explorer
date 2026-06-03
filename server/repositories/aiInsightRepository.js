@@ -1,4 +1,4 @@
-const DEFAULT_INSIGHT_TYPE = 'track_summary'
+const DEFAULT_INSIGHT_TYPE = 'track_engineering_v1'
 
 export function createAiInsightRepository(query) {
   return {

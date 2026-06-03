@@ -7,6 +7,8 @@ export const JOLPICA_CIRCUIT_IDS = {
   albert_park: 'albert_park',
   shanghai: 'shanghai',
   suzuka: 'suzuka',
+  bahrain: 'bahrain',
+  jeddah: 'jeddah',
   miami: 'miami',
   gilles_villeneuve: 'villeneuve',
   monaco: 'monaco',
@@ -17,7 +19,6 @@ export const JOLPICA_CIRCUIT_IDS = {
   hungaroring: 'hungaroring',
   zandvoort: 'zandvoort',
   monza: 'monza',
-  madring: 'madring',
   baku: 'baku',
   marina_bay: 'marina_bay',
   cota: 'americas',
@@ -28,11 +29,16 @@ export const JOLPICA_CIRCUIT_IDS = {
   yas_marina: 'yas_marina',
 }
 
+export const JOLPICA_UNAVAILABLE_CIRCUITS = {
+  madring: '2026 new venue; Jolpica/Ergast has no historical race winner results for this circuit yet',
+}
+
 const PAGE_LIMIT = 100
 
 export async function importCircuitHistories({
   circuits = circuitSeed,
   circuitMap = JOLPICA_CIRCUIT_IDS,
+  unavailableCircuitReasons = JOLPICA_UNAVAILABLE_CIRCUITS,
   jolpicaClient = createJolpicaClient(),
   raceRepository = createRaceRepository(query),
 } = {}) {
@@ -44,6 +50,12 @@ export async function importCircuitHistories({
   }
 
   for (const circuit of circuits) {
+    const unavailableReason = unavailableCircuitReasons[circuit.circuitId]
+    if (unavailableReason) {
+      summary.skipped.push({ circuitId: circuit.circuitId, reason: unavailableReason })
+      continue
+    }
+
     const jolpicaCircuitId = circuitMap[circuit.circuitId]
     if (!jolpicaCircuitId) {
       summary.skipped.push({ circuitId: circuit.circuitId, reason: 'missing-jolpica-mapping' })

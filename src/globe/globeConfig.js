@@ -32,29 +32,13 @@ export const globeConfig = {
 }
 
 export function getCameraPositionForViewport(width, height) {
-  const aspect = width / height
-
-  if (aspect < 0.7) {
-    return [0, 0.05, 14.2]
-  }
-
-  if (aspect < 1.1) {
-    return [0, 0.08, 7.4]
-  }
-
+  void width
+  void height
   return [0, 0.1, 6.05]
 }
 
 export function getGlobeScaleForViewport(width, height) {
-  const aspect = width / height
-
-  if (aspect < 0.7) {
-    return 0.58
-  }
-
-  if (aspect < 1.1) {
-    return 0.82
-  }
-
+  void width
+  void height
   return 1
 }

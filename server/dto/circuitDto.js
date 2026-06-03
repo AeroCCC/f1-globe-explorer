@@ -20,6 +20,7 @@ export function normalizeCircuitDto(circuit = {}) {
     turns: circuit.turns ?? null,
     firstGrandPrix: circuit.firstGrandPrix ?? null,
     isCurrentSeason: circuit.isCurrentSeason ?? false,
+    seasonRound: circuit.seasonRound ?? null,
     tags: Array.isArray(circuit.tags) ? circuit.tags : [],
     overview: circuit.overview ?? '',
     characteristics: Array.isArray(circuit.characteristics) ? circuit.characteristics : [],

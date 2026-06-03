@@ -1,11 +1,13 @@
 import { DrawerStateRenderer } from './DrawerStateRenderer'
 
 const insightRows = [
-  ['整体总结', 'summary'],
+  ['工程摘要', 'summary'],
   ['赛道特点', 'trackFeature'],
-  ['赛车调校', 'carSetup'],
+  ['调校重点', 'carSetup'],
+  ['轮胎与刹车', 'tyreAndBrakeLoad'],
+  ['超车与节奏', 'overtakingAndRacePace'],
   ['车手要求', 'driverRequirement'],
-  ['策略影响', 'strategyImpact'],
+  ['策略风险', 'strategyRisk'],
 ]
 
 export function CircuitAiTab({ model, onGenerate }) {
@@ -18,6 +20,7 @@ export function CircuitAiTab({ model, onGenerate }) {
       <div className="aiMeta">
         <span>模型：{model.modelName}</span>
         <span>{model.generatedAt}</span>
+        <span>可信度：{model.insight.dataConfidence}</span>
       </div>
       {onGenerate ? (
         <div className="aiActions">
@@ -33,6 +36,10 @@ export function CircuitAiTab({ model, onGenerate }) {
             <p>{model.insight[key]}</p>
           </section>
         ))}
+        <section>
+          <h2>数据说明</h2>
+          <p>{model.insight.dataNotes}</p>
+        </section>
       </div>
     </DrawerStateRenderer>
   )

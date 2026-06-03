@@ -20,6 +20,7 @@ const circuitColumns = [
   'turns',
   'first_grand_prprix',
   'is_current_season',
+  'season_round',
   'tags',
   'overview',
   'characteristics',
@@ -37,7 +38,7 @@ export function createCircuitRepository(query) {
       const rows = await query(
         `SELECT ${selectColumns}
          FROM circuits
-         ORDER BY is_current_season DESC, region ASC, display_grand_prix_name ASC`,
+         ORDER BY is_current_season DESC, season_round ASC NULLS LAST, region ASC, display_grand_prix_name ASC`,
       )
       return rows.map(mapCircuitRowToDto)
     },
@@ -81,6 +82,7 @@ export function createCircuitRepository(query) {
              turns = EXCLUDED.turns,
              first_grand_prix = EXCLUDED.first_grand_prix,
              is_current_season = EXCLUDED.is_current_season,
+             season_round = EXCLUDED.season_round,
              tags = EXCLUDED.tags,
              overview = EXCLUDED.overview,
              characteristics = EXCLUDED.characteristics,
@@ -113,6 +115,7 @@ export function mapCircuitToRow(circuit) {
     turns: circuit.turns,
     first_grand_prix: circuit.firstGrandPrix,
     is_current_season: circuit.isCurrentSeason,
+    season_round: circuit.seasonRound,
     tags: JSON.stringify(circuit.tags ?? []),
     overview: circuit.overview,
     characteristics: JSON.stringify(circuit.characteristics ?? []),
@@ -140,6 +143,7 @@ export function mapCircuitRowToDto(row) {
     turns: row.turns,
     firstGrandPrix: row.first_grand_prix,
     isCurrentSeason: row.is_current_season,
+    seasonRound: row.season_round,
     tags: parseJsonArray(row.tags),
     overview: row.overview,
     characteristics: parseJsonArray(row.characteristics),

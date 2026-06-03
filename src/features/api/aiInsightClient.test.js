@@ -1,7 +1,53 @@
 import { describe, expect, it, vi } from 'vitest'
-import { generateAiInsight } from './aiInsightClient'
+import {
+  generateAiInsight,
+  getAiInsight,
+  loadCircuitCalendar,
+  loadCircuitHistory,
+  loadCircuits,
+} from './aiInsightClient'
 
 describe('AI insight browser client', () => {
+  it('loads the circuit list from the serverless API envelope', async () => {
+    const fetchImpl = vi.fn(async () => ({
+      ok: true,
+      json: async () => ({
+        ok: true,
+        data: [{ circuitId: 'monza' }],
+        meta: { source: 'database', count: 24 },
+      }),
+    }))
+
+    const result = await loadCircuits({ fetchImpl })
+
+    expect(fetchImpl).toHaveBeenCalledWith('/api/circuits', { method: 'GET' })
+    expect(result).toEqual({
+      data: [{ circuitId: 'monza' }],
+      meta: { source: 'database', count: 24 },
+    })
+  })
+
+  it('loads tab data from history, calendar, and cached AI GET endpoints', async () => {
+    const fetchImpl = vi.fn(async (url) => ({
+      ok: true,
+      json: async () => ({
+        ok: true,
+        data: { circuitId: 'marina_bay', url },
+        meta: { source: 'database' },
+      }),
+    }))
+
+    await expect(loadCircuitHistory('marina_bay', { fetchImpl })).resolves.toMatchObject({
+      data: { url: '/api/circuits/marina_bay/history' },
+    })
+    await expect(loadCircuitCalendar('marina_bay', { season: 2026, fetchImpl })).resolves.toMatchObject({
+      data: { url: '/api/circuits/marina_bay/calendar?season=2026' },
+    })
+    await expect(getAiInsight('marina_bay', { fetchImpl })).resolves.toMatchObject({
+      data: { url: '/api/circuits/marina_bay/ai-insight' },
+    })
+  })
+
   it('posts to the selected circuit AI endpoint and returns data', async () => {
     const fetchImpl = vi.fn(async () => ({
       ok: true,

@@ -12,11 +12,13 @@ describe('circuit repository', () => {
       display_name: circuitSeed[0].displayName,
       display_grand_prix_name: circuitSeed[0].displayGrandPrixName,
       is_current_season: true,
+      season_round: circuitSeed[0].seasonRound,
     })
     expect(dto).toMatchObject({
       circuitId: circuitSeed[0].circuitId,
       chineseName: circuitSeed[0].displayName,
       displayGrandPrixName: circuitSeed[0].displayGrandPrixName,
+      seasonRound: circuitSeed[0].seasonRound,
       tags: circuitSeed[0].tags,
     })
   })
@@ -32,7 +34,9 @@ describe('circuit repository', () => {
     const circuits = await repository.listCircuits()
 
     expect(calls[0].text).toMatch(/FROM circuits/i)
-    expect(calls[0].text).toMatch(/ORDER BY is_current_season DESC, region ASC, display_grand_prix_name ASC/i)
+    expect(calls[0].text).toMatch(
+      /ORDER BY is_current_season DESC, season_round ASC NULLS LAST, region ASC, display_grand_prix_name ASC/i,
+    )
     expect(circuits[0]).toMatchObject({ circuitId: circuitSeed[0].circuitId })
   })
 

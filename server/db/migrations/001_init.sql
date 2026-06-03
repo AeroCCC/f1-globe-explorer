@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS circuits (
   turns INTEGER NOT NULL,
   first_grand_prix INTEGER NOT NULL,
   is_current_season BOOLEAN NOT NULL DEFAULT TRUE,
+  season_round INTEGER,
   tags JSONB NOT NULL DEFAULT '[]'::jsonb,
   overview TEXT NOT NULL,
   characteristics JSONB NOT NULL DEFAULT '[]'::jsonb,
@@ -56,7 +57,7 @@ CREATE TABLE IF NOT EXISTS race_results (
 CREATE TABLE IF NOT EXISTS ai_insights (
   insight_id BIGSERIAL PRIMARY KEY,
   circuit_id TEXT NOT NULL REFERENCES circuits(circuit_id) ON DELETE CASCADE,
-  insight_type TEXT NOT NULL DEFAULT 'track_summary',
+  insight_type TEXT NOT NULL DEFAULT 'track_engineering_v1',
   content JSONB NOT NULL,
   model_name TEXT NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),

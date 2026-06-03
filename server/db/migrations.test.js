@@ -4,6 +4,11 @@ import { describe, expect, it } from 'vitest'
 const initSql = readFileSync(new URL('./migrations/001_init.sql', import.meta.url), 'utf8')
 const historyMigrationUrl = new URL('./migrations/002_history_import.sql', import.meta.url)
 const resultUniquenessMigrationUrl = new URL('./migrations/003_race_result_winner_uniqueness.sql', import.meta.url)
+const circuitSeasonRoundMigrationUrl = new URL('./migrations/004_circuit_season_round.sql', import.meta.url)
+const aiInsightEngineeringTypeMigrationUrl = new URL(
+  './migrations/005_ai_insight_engineering_type.sql',
+  import.meta.url,
+)
 
 describe('database migrations', () => {
   it('creates the required Postgres tables idempotently', () => {
@@ -12,6 +17,8 @@ describe('database migrations', () => {
     expect(initSql).toMatch(/CREATE TABLE IF NOT EXISTS race_results/i)
     expect(initSql).toMatch(/CREATE TABLE IF NOT EXISTS ai_insights/i)
     expect(initSql).toMatch(/UNIQUE \(circuit_id, insight_type\)/i)
+    expect(initSql).toMatch(/insight_type TEXT NOT NULL DEFAULT 'track_engineering_v1'/i)
+    expect(initSql).toMatch(/season_round INTEGER/i)
   })
 
   it('does not contain destructive schema operations', () => {
@@ -42,5 +49,26 @@ describe('database migrations', () => {
     expect(resultSql).not.toMatch(/\bDROP\s+TABLE\b/i)
     expect(resultSql).not.toMatch(/\bTRUNCATE\b/i)
     expect(resultSql).not.toMatch(/\bDELETE\s+FROM\b/i)
+  })
+
+  it('adds current-season round ordering without destructive schema operations', () => {
+    expect(existsSync(circuitSeasonRoundMigrationUrl)).toBe(true)
+
+    const roundSql = readFileSync(circuitSeasonRoundMigrationUrl, 'utf8')
+    expect(roundSql).toMatch(/ADD COLUMN IF NOT EXISTS season_round INTEGER/i)
+    expect(roundSql).toMatch(/idx_circuits_current_round/i)
+    expect(roundSql).not.toMatch(/\bDROP\s+TABLE\b/i)
+    expect(roundSql).not.toMatch(/\bTRUNCATE\b/i)
+    expect(roundSql).not.toMatch(/\bDELETE\s+FROM\b/i)
+  })
+
+  it('defaults new AI insight records to the engineering analysis type', () => {
+    expect(existsSync(aiInsightEngineeringTypeMigrationUrl)).toBe(true)
+
+    const aiInsightTypeSql = readFileSync(aiInsightEngineeringTypeMigrationUrl, 'utf8')
+    expect(aiInsightTypeSql).toMatch(/ALTER COLUMN insight_type SET DEFAULT 'track_engineering_v1'/i)
+    expect(aiInsightTypeSql).not.toMatch(/\bDROP\s+TABLE\b/i)
+    expect(aiInsightTypeSql).not.toMatch(/\bTRUNCATE\b/i)
+    expect(aiInsightTypeSql).not.toMatch(/\bDELETE\s+FROM\b/i)
   })
 })

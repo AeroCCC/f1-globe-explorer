@@ -35,7 +35,11 @@ describe('circuit service database integration boundary', () => {
 
     expect(result.meta.source).toBe('static-seed')
     expect(result.meta.fallbackReason).toBe('database unavailable')
-    expect(result.data).toHaveLength(22)
+    expect(result.meta).toMatchObject({
+      season: 2026,
+      count: circuitSeed.length,
+    })
+    expect(result.data).toHaveLength(circuitSeed.length)
   })
 
   it('uses database detail results before static seed data', async () => {

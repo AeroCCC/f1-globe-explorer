@@ -10,9 +10,7 @@ describe('vercel deployment config', () => {
       buildCommand: 'npm run build',
       outputDirectory: 'dist',
     })
-    expect(vercelConfig.functions['api/**/*.js']).toMatchObject({
-      runtime: 'nodejs22.x',
-    })
+    expect(vercelConfig.functions).toBeUndefined()
   })
 
   it('keeps secrets out of tracked deployment config', () => {

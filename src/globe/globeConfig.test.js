@@ -29,13 +29,13 @@ describe('globeConfig', () => {
     })
   })
 
-  it('moves the camera back on narrow screens so the globe stays framed', () => {
+  it('keeps the desktop camera framing for the web desktop product boundary', () => {
     expect(getCameraPositionForViewport(1440, 900)).toEqual([0, 0.1, 6.05])
-    expect(getCameraPositionForViewport(390, 844)).toEqual([0, 0.05, 14.2])
+    expect(getCameraPositionForViewport(800, 900)).toEqual([0, 0.1, 6.05])
   })
 
-  it('scales the globe down on phone-sized portrait screens', () => {
+  it('keeps the desktop globe scale for the web desktop product boundary', () => {
     expect(getGlobeScaleForViewport(1440, 900)).toBe(1)
-    expect(getGlobeScaleForViewport(390, 844)).toBe(0.58)
+    expect(getGlobeScaleForViewport(800, 900)).toBe(1)
   })
 })

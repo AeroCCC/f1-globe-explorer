@@ -46,8 +46,80 @@ describe('getCircuitTabModel', () => {
       insight: {
         summary: expect.stringContaining('低速街道赛道'),
         carSetup: expect.stringContaining('机械抓地力'),
+        tyreAndBrakeLoad: expect.stringContaining('制动'),
+        overtakingAndRacePace: expect.stringContaining('超车'),
         driverRequirement: expect.stringContaining('专注力'),
-        strategyImpact: expect.stringContaining('安全车'),
+        strategyRisk: expect.stringContaining('安全车'),
+        dataConfidence: '中',
+        dataNotes: expect.stringContaining('历史冠军'),
+      },
+    })
+  })
+
+  it('returns cached AI insight data attached from the backend API', () => {
+    expect(
+      getCircuitTabModel(
+        {
+          ...marinaBay,
+          aiInsight: {
+            status: 'ready',
+            modelName: 'deepseek-v4-flash',
+            generatedAt: '2026-06-03T00:00:00.000Z',
+            insight: {
+              summary: '数据库缓存总结',
+              trackFeature: '数据库缓存特点',
+              carSetup: '数据库缓存调校',
+              tyreAndBrakeLoad: '数据库缓存轮胎',
+              overtakingAndRacePace: '数据库缓存超车',
+              driverRequirement: '数据库缓存车手',
+              strategyRisk: '数据库缓存策略',
+              dataConfidence: '高',
+              dataNotes: '数据库缓存说明',
+            },
+          },
+        },
+        'ai',
+      ),
+    ).toMatchObject({
+      status: 'ready',
+      modelName: 'deepseek-v4-flash',
+      insight: {
+        summary: '数据库缓存总结',
+        tyreAndBrakeLoad: '数据库缓存轮胎',
+        strategyRisk: '数据库缓存策略',
+        dataConfidence: '高',
+        dataNotes: '数据库缓存说明',
+      },
+    })
+  })
+
+  it('keeps legacy AI insight cache content renderable with fallback engineering fields', () => {
+    expect(
+      getCircuitTabModel(
+        {
+          ...marinaBay,
+          aiInsight: {
+            status: 'ready',
+            modelName: 'deepseek-v4-flash',
+            generatedAt: '2026-06-03T00:00:00.000Z',
+            insight: {
+              summary: '旧缓存总结',
+              trackFeature: '旧缓存特点',
+              carSetup: '旧缓存调校',
+              driverRequirement: '旧缓存车手',
+              strategyImpact: '旧缓存策略',
+            },
+          },
+        },
+        'ai',
+      ),
+    ).toMatchObject({
+      status: 'ready',
+      insight: {
+        summary: '旧缓存总结',
+        tyreAndBrakeLoad: '旧缓存调校',
+        strategyRisk: '旧缓存策略',
+        dataConfidence: '低',
       },
     })
   })

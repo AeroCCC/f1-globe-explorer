@@ -3,6 +3,7 @@
 > 项目定位：一个以 3D 地球为核心视觉入口的 Formula 1 全球赛道数据探索 Web 应用。
 > 页面形态：单页面应用，不设置传统顶部导航栏，不设置左侧浮动面板，仅保留 3D 主视觉、右侧动态侧边栏与底部状态栏。
 > 技术方案：React + Vite + React Three Fiber 前端，Node Serverless API 后端，Postgres 数据库，DeepSeek 生成中文 AI 赛道解读。
+> 当前开发边界：仅覆盖 Web 桌面端产品体验。
 
 ---
 
@@ -69,7 +70,7 @@ F1 Globe Explorer 是一个基于 React、Vite、React Three Fiber 与 Node Serv
 - 主视觉区域尽可能留给 3D 地球。
 - 右侧动态侧边栏只在用户点击赛道后出现。
 - 底部状态栏始终显示，用于展示全局状态信息。
-- 移动端将右侧侧边栏降级为底部抽屉或全屏弹层。
+- 当前版本只验收桌面 Web 布局。
 
 ---
 
@@ -133,7 +134,7 @@ F1 Globe Explorer 是一个基于 React、Vite、React Three Fiber 与 Node Serv
 - 桌面端：页面宽度的 28% 到 34%。
 - 最小宽度：360px。
 - 最大宽度：520px。
-- 移动端：底部抽屉或全屏弹层。
+- 当前版本不设计小屏替代形态。
 
 侧边栏内部模块：
 
@@ -262,16 +263,14 @@ FrontDesign/code.html    Stitch 生成的结构与样式参考，作为布局拆
 - 圆角不超过 8px。
 - 不使用重阴影。
 
-#### 移动端布局
+#### 桌面端产品边界
 
-移动端设计尺寸以 `390x844` 为主要参考。
+当前版本只实现和验收 Web 桌面端体验，以 `1440x900` 为主要参考。
 
-- 地球仍然是第一视觉主体。
-- 右侧栏改为底部抽屉。
-- 底部状态栏压缩为短标签或两行紧凑信息。
-- 触控目标不小于 44px。
-- 不允许横向滚动。
-- 不允许面板遮住全部地球，除非用户主动展开详情。
+- 地球始终是第一视觉主体。
+- 右侧栏保持桌面端右侧动态侧边栏形态。
+- 底部状态栏保持单行紧凑信息。
+- 不增加小屏替代布局。
 
 #### 色彩规范
 
@@ -537,13 +536,11 @@ Interaction states to show visually:
 - Drawer is open because a circuit is selected.
 - Bottom status bar reflects selected circuit.
 
-Responsive behavior:
-Also design a mobile version:
+Desktop behavior:
 - Earth remains the first visual priority.
-- Drawer becomes a bottom sheet.
-- Bottom status bar becomes a compact two-row strip or collapses into short chips.
-- Touch targets at least 44px.
-- No horizontal scrolling.
+- Drawer remains a right-side overlay panel.
+- Bottom status bar remains a compact single-row strip.
+- Do not add alternate small-screen layouts in the current version.
 
 Important constraints:
 - Do not create a marketing homepage.
@@ -555,7 +552,7 @@ Important constraints:
 - The first screen must be the actual product experience: 3D Earth + F1 markers + selected circuit drawer + bottom status bar.
 
 Output:
-Generate a polished desktop app screen at 1440x900 and a mobile screen at 390x844.
+Generate a polished desktop app screen at 1440x900.
 Prioritize realistic spacing, strong contrast, premium motorsport mood, and implementation-friendly React components.
 ```
 
@@ -1424,7 +1421,7 @@ POST /api/circuits/:circuitId/ai-insight
 - 侧边栏概览信息完整。
 - 标签页切换稳定。
 - 空数据和失败状态不会导致页面崩溃。
-- 移动端侧边栏可作为底部抽屉使用。
+- Web 桌面端侧边栏布局稳定。
 
 ---
 
@@ -1547,7 +1544,7 @@ POST /api/circuits/:circuitId/ai-insight
 11. Serverless API 可以返回赛道、历史数据、赛历和 AI 解读。
 12. Postgres 可以缓存赛道基础数据和 AI 解读。
 13. DeepSeek AI 解读可以正常生成或读取缓存。
-14. 桌面端和移动端核心流程都可用。
+14. Web 桌面端核心流程可用。
 15. 项目可以运行并部署。
 
 ---
@@ -1580,7 +1577,7 @@ POST /api/circuits/:circuitId/ai-insight 首次生成，二次命中缓存
 点击点位后右侧栏打开并显示对应赛道
 标签页切换正常
 Loading / Error / Empty 状态可见
-桌面和 390x844 移动端无主要内容遮挡
+1440x900 桌面视口无主要内容遮挡
 ```
 
 ### 11.4 命令验证

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { circuitSeed } from '../../src/features/circuits/circuitSeed'
 import {
   JOLPICA_CIRCUIT_IDS,
+  JOLPICA_UNAVAILABLE_CIRCUITS,
   buildHistoricalWinnerRecords,
   importCircuitHistories,
 } from './jolpicaHistoryImport'
@@ -32,8 +33,11 @@ const racePayload = {
 }
 
 describe('Jolpica history import service', () => {
-  it('keeps a Jolpica circuit ID mapping for every current seed circuit', () => {
-    expect(Object.keys(JOLPICA_CIRCUIT_IDS).sort()).toEqual(circuitSeed.map((circuit) => circuit.circuitId).sort())
+  it('keeps a Jolpica mapping or explicit unavailable reason for every current seed circuit', () => {
+    const coveredCircuitIds = [...Object.keys(JOLPICA_CIRCUIT_IDS), ...Object.keys(JOLPICA_UNAVAILABLE_CIRCUITS)]
+
+    expect(coveredCircuitIds.sort()).toEqual(circuitSeed.map((circuit) => circuit.circuitId).sort())
+    expect(JOLPICA_UNAVAILABLE_CIRCUITS.madring).toContain('2026 new venue')
   })
 
   it('builds normalized historical winner records from Jolpica races', () => {
@@ -81,6 +85,7 @@ describe('Jolpica history import service', () => {
     const result = await importCircuitHistories({
       circuits: [{ circuitId: 'marina_bay' }, { circuitId: 'madring' }],
       circuitMap: { marina_bay: 'marina_bay', madring: 'madring' },
+      unavailableCircuitReasons: {},
       jolpicaClient,
       raceRepository,
     })
@@ -99,6 +104,38 @@ describe('Jolpica history import service', () => {
         { circuitId: 'madring', jolpicaCircuitId: 'madring', importedRaces: 101 },
       ],
       skipped: [],
+      errors: [],
+    })
+  })
+
+  it('skips circuits with explicit unavailable Jolpica history reasons', async () => {
+    const requested = []
+    const jolpicaClient = {
+      getCircuitWinnerResults: async (jolpicaCircuitId) => {
+        requested.push(jolpicaCircuitId)
+        return { MRData: { total: '0', RaceTable: { Races: [] } } }
+      },
+    }
+    const raceRepository = {
+      upsertRaceWinner: async () => {},
+    }
+
+    const result = await importCircuitHistories({
+      circuits: [{ circuitId: 'madring' }],
+      jolpicaClient,
+      raceRepository,
+    })
+
+    expect(requested).toEqual([])
+    expect(result).toEqual({
+      importedRaces: 0,
+      circuits: [],
+      skipped: [
+        {
+          circuitId: 'madring',
+          reason: '2026 new venue; Jolpica/Ergast has no historical race winner results for this circuit yet',
+        },
+      ],
       errors: [],
     })
   })

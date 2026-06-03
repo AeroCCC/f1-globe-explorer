@@ -1,33 +1,27 @@
-import { useMemo, useState } from 'react'
 import { GlobeScene } from './globe/GlobeScene'
-import { getNextFocusedCircuitId } from './globe/globeFocus'
-import { circuitSeed } from './features/circuits/circuitSeed'
+import { useCircuitTabResources } from './features/app-state/useCircuitTabResources'
+import { useCircuitsResource } from './features/app-state/useCircuitsResource'
+import { useGlobeSelection } from './features/app-state/useGlobeSelection'
+import { useSelectedCircuit } from './features/app-state/useSelectedCircuit'
 import { CircuitDrawer } from './features/drawer/CircuitDrawer'
 import { BottomStatusBar } from './features/status/BottomStatusBar'
 import './App.css'
 
 function App() {
-  const [selectedCircuitId, setSelectedCircuitId] = useState('marina_bay')
-  const [focusedCircuitId, setFocusedCircuitId] = useState('marina_bay')
-  const [hoveredCircuitId, setHoveredCircuitId] = useState(null)
-  const [drawerOpen, setDrawerOpen] = useState(true)
-  const [activeDrawerTab, setActiveDrawerTab] = useState('overview')
-  const selectedCircuit = useMemo(
-    () => circuitSeed.find((circuit) => circuit.circuitId === selectedCircuitId),
-    [selectedCircuitId],
-  )
+  const circuitsResource = useCircuitsResource()
+  const selection = useSelectedCircuit(circuitsResource.circuits)
+  const globeSelection = useGlobeSelection()
+  const tabResources = useCircuitTabResources({
+    selectedCircuit: selection.selectedCircuit,
+    selectedCircuitId: selection.selectedCircuitId,
+    activeDrawerTab: selection.activeDrawerTab,
+    onTabLoadMeta: circuitsResource.applyTabMeta,
+    onTabLoadError: circuitsResource.applyTabError,
+  })
+
   const handleSelectCircuit = (circuitId) => {
-    setSelectedCircuitId(circuitId)
-    setFocusedCircuitId((currentFocusedCircuitId) =>
-      getNextFocusedCircuitId(currentFocusedCircuitId, { type: 'select-circuit', circuitId }),
-    )
-    setActiveDrawerTab('overview')
-    setDrawerOpen(true)
-  }
-  const handleUserControlGlobe = () => {
-    setFocusedCircuitId((currentFocusedCircuitId) =>
-      getNextFocusedCircuitId(currentFocusedCircuitId, { type: 'user-control-start' }),
-    )
+    selection.selectCircuit(circuitId)
+    globeSelection.focusCircuit(circuitId)
   }
 
   return (
@@ -41,29 +35,31 @@ function App() {
 
       <section className="globeStage" aria-label="可交互 3D 地球">
         <GlobeScene
-          circuits={circuitSeed}
-          selectedCircuitId={selectedCircuitId}
-          focusedCircuitId={focusedCircuitId}
-          hoveredCircuitId={hoveredCircuitId}
-          onHoverCircuit={setHoveredCircuitId}
+          circuits={circuitsResource.circuits}
+          selectedCircuitId={selection.selectedCircuitId}
+          focusedCircuitId={globeSelection.focusedCircuitId}
+          hoveredCircuitId={globeSelection.hoveredCircuitId}
+          onHoverCircuit={globeSelection.setHoveredCircuitId}
           onSelectCircuit={handleSelectCircuit}
-          onUserControlGlobe={handleUserControlGlobe}
+          onUserControlGlobe={globeSelection.releaseFocusForUserControl}
         />
       </section>
 
       <CircuitDrawer
-        circuit={selectedCircuit}
-        open={drawerOpen}
-        activeTab={activeDrawerTab}
-        onTabChange={setActiveDrawerTab}
-        onClose={() => setDrawerOpen(false)}
+        circuit={tabResources.selectedCircuit}
+        open={selection.drawerOpen}
+        activeTab={selection.activeDrawerTab}
+        onTabChange={selection.setActiveDrawerTab}
+        onClose={selection.closeDrawer}
       />
 
       <BottomStatusBar
-        circuitCount={circuitSeed.length}
-        selectedCircuit={selectedCircuit}
-        drawerOpen={drawerOpen}
-        onSelectedClick={() => setDrawerOpen(true)}
+        circuitCount={circuitsResource.circuits.length}
+        selectedCircuit={tabResources.selectedCircuit}
+        dataSource={circuitsResource.statusSnapshot.dataSource}
+        connectionStatus={circuitsResource.statusSnapshot.connectionStatus}
+        drawerOpen={selection.drawerOpen}
+        onSelectedClick={selection.openDrawer}
       />
     </main>
   )

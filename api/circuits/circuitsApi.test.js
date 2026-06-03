@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { circuitSeed } from '../../src/features/circuits/circuitSeed'
 import aiInsightHandler from './[circuitId]/ai-insight'
 import calendarHandler from './[circuitId]/calendar'
 import historyHandler from './[circuitId]/history'
@@ -41,9 +42,10 @@ describe('circuits serverless API handlers', () => {
 
     expect(res.statusCode).toBe(200)
     expect(res.body.ok).toBe(true)
-    expect(res.body.data).toHaveLength(22)
+    expect(res.body.data).toHaveLength(circuitSeed.length)
     expect(res.body.data[0]).toHaveProperty('chineseName')
-    expect(res.body.meta).toMatchObject({ source: 'static-seed', count: 22 })
+    expect(res.body.meta).toMatchObject({ source: 'static-seed', season: 2026, count: circuitSeed.length })
+    expect(res.body.data.map((circuit) => circuit.circuitId)).toEqual(circuitSeed.map((circuit) => circuit.circuitId))
   })
 
   it('returns one circuit detail from GET /api/circuits/:circuitId', async () => {
@@ -114,6 +116,10 @@ describe('circuits serverless API handlers', () => {
       cached: false,
       insight: {
         summary: expect.stringContaining('静态赛道资料'),
+        tyreAndBrakeLoad: expect.stringContaining('轮胎'),
+        strategyRisk: expect.stringContaining('策略风险'),
+        dataConfidence: '低',
+        dataNotes: expect.stringContaining('静态预览'),
       },
     })
   })

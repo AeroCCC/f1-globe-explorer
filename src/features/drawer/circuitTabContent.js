@@ -43,8 +43,12 @@ const detailSeed = {
       summary: '滨海湾是一条典型低速街道赛道，弯道密集、节奏压迫感强，赛车很难长时间散热。',
       trackFeature: '赛道以低速牵引、重刹和贴墙行驶为核心，单圈容错率低，交通和黄旗会放大排位重要性。',
       carSetup: '赛车调校更强调机械抓地力、刹车稳定性和冷却效率，同时不能完全牺牲直道尾速。',
+      tyreAndBrakeLoad: '低速重刹和高温环境会提高制动与冷却压力，轮胎管理直接影响长距离节奏。',
+      overtakingAndRacePace: '超车机会有限，比赛节奏高度依赖赛道位置、安全车窗口和出弯牵引。',
       driverRequirement: '车手需要极强专注力、体能储备和贴墙精度，长距离比赛中失误成本很高。',
-      strategyImpact: '安全车和进站窗口对比赛结果影响显著，过早或过晚进站都可能被赛道位置放大。',
+      strategyRisk: '安全车和进站窗口对比赛结果影响显著，过早或过晚进站都可能被赛道位置放大。',
+      dataConfidence: '中',
+      dataNotes: '历史冠军和安全车判断来自本地静态历史资料，调校判断基于赛道属性推断。',
     },
   },
 }
@@ -93,18 +97,23 @@ export function getCircuitTabModel(circuit, tabId) {
 
   if (tabId === 'ai') {
     const aiInsight = circuit.aiInsight ?? detailSeed[circuit.circuitId]?.aiInsight ?? createFallbackAiInsight(circuit)
+    const insight = aiInsight.insight ?? aiInsight
 
     return {
-      status: 'ready',
+      status: aiInsight.status ?? 'ready',
       title: 'AI 解读',
       modelName: aiInsight.modelName,
       generatedAt: aiInsight.generatedAt,
       insight: {
-        summary: aiInsight.summary,
-        trackFeature: aiInsight.trackFeature,
-        carSetup: aiInsight.carSetup,
-        driverRequirement: aiInsight.driverRequirement,
-        strategyImpact: aiInsight.strategyImpact,
+        summary: insight.summary ?? '暂无工程摘要。',
+        trackFeature: insight.trackFeature ?? '暂无赛道特点。',
+        carSetup: insight.carSetup ?? '暂无调校重点。',
+        tyreAndBrakeLoad: insight.tyreAndBrakeLoad ?? insight.carSetup ?? '暂无轮胎与刹车分析。',
+        overtakingAndRacePace: insight.overtakingAndRacePace ?? insight.strategyImpact ?? '暂无超车与节奏分析。',
+        driverRequirement: insight.driverRequirement ?? '暂无车手要求分析。',
+        strategyRisk: insight.strategyRisk ?? insight.strategyImpact ?? '暂无策略风险分析。',
+        dataConfidence: insight.dataConfidence ?? '低',
+        dataNotes: insight.dataNotes ?? '该内容来自旧版 AI 解读或静态预览，缺少完整数据来源说明。',
       },
     }
   }
@@ -139,7 +148,11 @@ function createFallbackAiInsight(circuit) {
     summary: `${circuit.displayName}是一条${circuit.trackTypeLabel}，当前先展示基于静态赛道资料的预览解读。`,
     trackFeature: circuit.overview,
     carSetup: '正式 AI 模块接入后，将结合赛道结构、历史结果和赛历信息生成更完整的调校分析。',
+    tyreAndBrakeLoad: '轮胎与刹车负荷会结合弯角数量、制动区和历史退化表现进一步分析。',
+    overtakingAndRacePace: '超车难度和比赛节奏会在历史结果与赛历信息接入后进一步细化。',
     driverRequirement: '车手要求会根据赛道类型、弯道数量和比赛环境补充。',
-    strategyImpact: '策略影响将在历史数据和当前赛季赛历接入后进一步细化。',
+    strategyRisk: '策略风险将在历史数据、赛道位置和当前赛季赛历接入后进一步细化。',
+    dataConfidence: '低',
+    dataNotes: '当前为静态预览，主要来自赛道基础字段和本地种子数据，不代表 DeepSeek 生成结论。',
   }
 }

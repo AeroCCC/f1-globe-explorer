@@ -74,6 +74,54 @@ const baseCircuitSeed = [
     ],
   },
   {
+    circuitId: 'bahrain',
+    name: 'Bahrain International Circuit',
+    grandPrixName: 'Bahrain Grand Prix',
+    shortGrandPrixName: 'Bahrain GP',
+    country: 'Bahrain',
+    city: 'Sakhir',
+    region: 'Middle East',
+    latitude: 26.0325,
+    longitude: 50.5106,
+    trackType: 'Permanent Circuit',
+    lengthKm: 5.412,
+    turns: 15,
+    firstGrandPrix: 2004,
+    isCurrentSeason: true,
+    tags: ['Desert Venue', 'Night Race', 'Rear-Limited'],
+    overview:
+      'A desert permanent circuit where traction, rear tyre degradation, and heavy braking zones define race pace and strategy.',
+    characteristics: [
+      ['Rear Tyres', 'Demanding'],
+      ['Braking Zones', 'High'],
+      ['Track Evolution', 'High'],
+    ],
+  },
+  {
+    circuitId: 'jeddah',
+    name: 'Jeddah Corniche Circuit',
+    grandPrixName: 'Saudi Arabian Grand Prix',
+    shortGrandPrixName: 'Saudi Arabian GP',
+    country: 'Saudi Arabia',
+    city: 'Jeddah',
+    region: 'Middle East',
+    latitude: 21.6319,
+    longitude: 39.1044,
+    trackType: 'Street Circuit',
+    lengthKm: 6.174,
+    turns: 27,
+    firstGrandPrix: 2021,
+    isCurrentSeason: true,
+    tags: ['High Speed Street', 'Blind Corners', 'Night Race'],
+    overview:
+      'A very fast street circuit where confidence through blind walls, low drag, and braking precision create a narrow setup window.',
+    characteristics: [
+      ['Average Speed', 'Very High'],
+      ['Wall Proximity', 'High'],
+      ['Qualifying Confidence', 'Critical'],
+    ],
+  },
+  {
     circuitId: 'miami',
     name: 'Miami International Autodrome',
     grandPrixName: 'Miami Grand Prix',
@@ -574,6 +622,34 @@ const localizedCircuitContent = {
       ['失误代价', '高'],
     ],
   },
+  bahrain: {
+    displayName: '巴林国际赛道',
+    displayGrandPrixName: '巴林大奖赛',
+    shortDisplayGrandPrixName: '巴林站',
+    displayCountry: '巴林',
+    trackTypeLabel: '永久赛道',
+    tags: ['沙漠赛道', '夜赛', '后胎负荷'],
+    overview: '一条沙漠环境中的永久赛道，出弯牵引、后胎衰退和重刹区会直接影响比赛策略。',
+    characteristics: [
+      ['后胎压力', '较高'],
+      ['制动区域', '多'],
+      ['赛道演化', '明显'],
+    ],
+  },
+  jeddah: {
+    displayName: '吉达滨海赛道',
+    displayGrandPrixName: '沙特阿拉伯大奖赛',
+    shortDisplayGrandPrixName: '沙特阿拉伯站',
+    displayCountry: '沙特阿拉伯',
+    trackTypeLabel: '街道赛道',
+    tags: ['高速街道', '盲弯', '夜赛'],
+    overview: '一条极高速街道赛道，贴墙信心、低阻设定和制动精度让调校窗口非常狭窄。',
+    characteristics: [
+      ['平均速度', '很高'],
+      ['墙体距离', '近'],
+      ['排位信心', '关键'],
+    ],
+  },
   miami: {
     displayName: '迈阿密国际赛车场',
     displayGrandPrixName: '迈阿密大奖赛',
@@ -842,7 +918,8 @@ const localizedCircuitContent = {
   },
 }
 
-export const circuitSeed = baseCircuitSeed.map((circuit) => ({
+export const circuitSeed = baseCircuitSeed.map((circuit, index) => ({
   ...circuit,
+  seasonRound: index + 1,
   ...localizedCircuitContent[circuit.circuitId],
 }))

@@ -1,6 +1,32 @@
+export async function loadCircuits({ fetchImpl = fetch } = {}) {
+  return requestApi('/api/circuits', { fetchImpl })
+}
+
+export async function loadCircuitHistory(circuitId, { fetchImpl = fetch } = {}) {
+  return requestApi(`/api/circuits/${encodeURIComponent(circuitId)}/history`, { fetchImpl })
+}
+
+export async function loadCircuitCalendar(circuitId, { season, fetchImpl = fetch } = {}) {
+  const params = season ? `?season=${encodeURIComponent(season)}` : ''
+  return requestApi(`/api/circuits/${encodeURIComponent(circuitId)}/calendar${params}`, { fetchImpl })
+}
+
+export async function getAiInsight(circuitId, { fetchImpl = fetch } = {}) {
+  return requestApi(`/api/circuits/${encodeURIComponent(circuitId)}/ai-insight`, { fetchImpl })
+}
+
 export async function generateAiInsight(circuitId, { fetchImpl = fetch } = {}) {
-  const response = await fetchImpl(`/api/circuits/${encodeURIComponent(circuitId)}/ai-insight`, {
+  const result = await requestApi(`/api/circuits/${encodeURIComponent(circuitId)}/ai-insight`, {
+    fetchImpl,
     method: 'POST',
+  })
+
+  return result.data
+}
+
+async function requestApi(path, { fetchImpl, method = 'GET' }) {
+  const response = await fetchImpl(path, {
+    method,
   })
   let body
 
@@ -14,5 +40,8 @@ export async function generateAiInsight(circuitId, { fetchImpl = fetch } = {}) {
     throw new Error(body.error?.message ?? 'AI 分析生成失败')
   }
 
-  return body.data
+  return {
+    data: body.data,
+    meta: body.meta ?? {},
+  }
 }

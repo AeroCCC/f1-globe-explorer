@@ -30,6 +30,7 @@ describe('circuit API DTO helpers', () => {
       turns: null,
       firstGrandPrix: null,
       isCurrentSeason: false,
+      seasonRound: null,
     })
   })
 

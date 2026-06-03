@@ -16,15 +16,43 @@ const requiredFields = [
   'turns',
   'firstGrandPrix',
   'isCurrentSeason',
+  'seasonRound',
   'tags',
   'overview',
   'characteristics',
 ]
 
+const official2026CircuitOrder = [
+  'albert_park',
+  'shanghai',
+  'suzuka',
+  'bahrain',
+  'jeddah',
+  'miami',
+  'gilles_villeneuve',
+  'monaco',
+  'barcelona_catalunya',
+  'red_bull_ring',
+  'silverstone',
+  'spa',
+  'hungaroring',
+  'zandvoort',
+  'monza',
+  'madring',
+  'baku',
+  'marina_bay',
+  'cota',
+  'hermanos_rodriguez',
+  'interlagos',
+  'las_vegas',
+  'lusail',
+  'yas_marina',
+]
+
 describe('circuitSeed', () => {
   it('contains the current official 2026 race circuits used by the globe', () => {
     expect(CURRENT_SEASON).toBe(2026)
-    expect(circuitSeed).toHaveLength(22)
+    expect(circuitSeed.map((circuit) => circuit.circuitId)).toEqual(official2026CircuitOrder)
   })
 
   it('defines complete and unique circuit records for marker rendering', () => {
@@ -43,6 +71,7 @@ describe('circuitSeed', () => {
       expect(circuit.longitude).toBeLessThanOrEqual(180)
       expect(circuit.lengthKm).toBeGreaterThan(0)
       expect(circuit.turns).toBeGreaterThan(0)
+      expect(circuit.seasonRound).toBeGreaterThan(0)
       expect(circuit.tags.length).toBeGreaterThan(0)
       expect(circuit.characteristics.length).toBeGreaterThan(0)
     }

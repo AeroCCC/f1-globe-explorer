@@ -56,8 +56,12 @@ describe('drawer tab render states', () => {
             summary: '总结',
             trackFeature: '特点',
             carSetup: '调校',
+            tyreAndBrakeLoad: '轮胎刹车',
+            overtakingAndRacePace: '超车节奏',
             driverRequirement: '车手',
-            strategyImpact: '策略',
+            strategyRisk: '策略',
+            dataConfidence: '中',
+            dataNotes: '说明',
           },
         }}
         onGenerate={() => {}}
@@ -65,5 +69,9 @@ describe('drawer tab render states', () => {
     )
 
     expect(html).toContain('生成 AI 分析')
+    expect(html).toContain('轮胎与刹车')
+    expect(html).toContain('策略风险')
+    expect(html).toContain('可信度：中')
+    expect(html).toContain('数据说明')
   })
 })
