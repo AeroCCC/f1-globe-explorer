@@ -566,6 +566,28 @@
   color: #9aa4b2;
 }
 
+.aiActions {
+  margin-bottom: 14px;
+}
+
+.aiActions button {
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1px solid #e10600;
+  border-radius: 4px;
+  background: #e10600;
+  color: #ffffff;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.aiActions button:disabled {
+  cursor: wait;
+  opacity: 0.68;
+}
+
 .aiInsightList {
   display: grid;
   gap: 12px;

@@ -1,6 +1,9 @@
 import { circuitSeed, CURRENT_SEASON } from '../../src/features/circuits/circuitSeed.js'
 import { normalizeCircuitDto } from '../dto/circuitDto.js'
 import { ApiError } from '../http/apiResponse.js'
+import { query } from '../db/client.js'
+import { createCircuitRepository } from '../repositories/circuitRepository.js'
+import { createRaceRepository } from '../repositories/raceRepository.js'
 
 const DATA_SOURCE = 'static-seed'
 
@@ -46,18 +49,63 @@ const detailSeed = {
   },
 }
 
-export function listCircuits() {
+export async function listCircuits(options = {}) {
+  const { repository = createCircuitRepository(query), useDatabase = shouldUseDatabase() } = options
+
+  if (useDatabase) {
+    try {
+      const circuits = await repository.listCircuits()
+      if (circuits.length > 0) {
+        const data = circuits.map(normalizeCircuitDto)
+        return {
+          data,
+          meta: {
+            source: 'database',
+            season: CURRENT_SEASON,
+            count: data.length,
+          },
+        }
+      }
+    } catch (error) {
+      return createStaticCircuitListResult(error.message)
+    }
+  }
+
+  return createStaticCircuitListResult()
+}
+
+function createStaticCircuitListResult(fallbackReason) {
   return {
     data: circuitSeed.map(normalizeCircuitDto),
     meta: {
       source: DATA_SOURCE,
       season: CURRENT_SEASON,
       count: circuitSeed.length,
+      ...(fallbackReason ? { fallbackReason } : {}),
     },
   }
 }
 
-export function getCircuitDetail(circuitId) {
+export async function getCircuitDetail(circuitId, options = {}) {
+  const { repository = createCircuitRepository(query), useDatabase = shouldUseDatabase() } = options
+
+  if (useDatabase) {
+    try {
+      const circuit = await repository.getCircuitById(circuitId)
+      if (circuit) {
+        return {
+          data: normalizeCircuitDto(circuit),
+          meta: {
+            source: 'database',
+            season: CURRENT_SEASON,
+          },
+        }
+      }
+    } catch {
+      // Static seed fallback keeps the API available when local database setup is incomplete.
+    }
+  }
+
   const circuit = findCircuitOrThrow(circuitId)
 
   return {
@@ -69,8 +117,26 @@ export function getCircuitDetail(circuitId) {
   }
 }
 
-export function getCircuitHistory(circuitId) {
+export async function getCircuitHistory(circuitId, options = {}) {
+  const { historyRepository = createRaceRepository(query), useDatabase = shouldUseDatabase() } = options
   const circuit = findCircuitOrThrow(circuitId)
+
+  if (useDatabase) {
+    try {
+      const history = await historyRepository.getCircuitHistory(circuitId)
+      if (history.status === 'ready' || history.status === 'empty') {
+        return {
+          data: history,
+          meta: {
+            source: 'database',
+          },
+        }
+      }
+    } catch {
+      // Static preview fallback keeps the API available when local database setup is incomplete.
+    }
+  }
+
   const history = detailSeed[circuit.circuitId]?.history
 
   return {
@@ -150,6 +216,10 @@ function findCircuitOrThrow(circuitId) {
   }
 
   return circuit
+}
+
+function shouldUseDatabase() {
+  return process.env.NODE_ENV !== 'test'
 }
 
 function createFallbackAiInsight(circuit) {

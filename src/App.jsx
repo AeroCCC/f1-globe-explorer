@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { GlobeScene } from './globe/GlobeScene'
+import { getNextFocusedCircuitId } from './globe/globeFocus'
 import { circuitSeed } from './features/circuits/circuitSeed'
 import { CircuitDrawer } from './features/drawer/CircuitDrawer'
 import { BottomStatusBar } from './features/status/BottomStatusBar'
@@ -7,6 +8,7 @@ import './App.css'
 
 function App() {
   const [selectedCircuitId, setSelectedCircuitId] = useState('marina_bay')
+  const [focusedCircuitId, setFocusedCircuitId] = useState('marina_bay')
   const [hoveredCircuitId, setHoveredCircuitId] = useState(null)
   const [drawerOpen, setDrawerOpen] = useState(true)
   const [activeDrawerTab, setActiveDrawerTab] = useState('overview')
@@ -16,8 +18,16 @@ function App() {
   )
   const handleSelectCircuit = (circuitId) => {
     setSelectedCircuitId(circuitId)
+    setFocusedCircuitId((currentFocusedCircuitId) =>
+      getNextFocusedCircuitId(currentFocusedCircuitId, { type: 'select-circuit', circuitId }),
+    )
     setActiveDrawerTab('overview')
     setDrawerOpen(true)
+  }
+  const handleUserControlGlobe = () => {
+    setFocusedCircuitId((currentFocusedCircuitId) =>
+      getNextFocusedCircuitId(currentFocusedCircuitId, { type: 'user-control-start' }),
+    )
   }
 
   return (
@@ -33,9 +43,11 @@ function App() {
         <GlobeScene
           circuits={circuitSeed}
           selectedCircuitId={selectedCircuitId}
+          focusedCircuitId={focusedCircuitId}
           hoveredCircuitId={hoveredCircuitId}
           onHoverCircuit={setHoveredCircuitId}
           onSelectCircuit={handleSelectCircuit}
+          onUserControlGlobe={handleUserControlGlobe}
         />
       </section>
 

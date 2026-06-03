@@ -8,6 +8,13 @@ export function createJolpicaClient({ fetchImpl = fetch, baseUrl = JOLPICA_BASE_
     async getCircuitResults(season, round) {
       return fetchJson(fetchImpl, `${baseUrl}/${season}/${round}/results.json`)
     },
+    async getCircuitWinnerResults(circuitId, { limit = 100, offset = 0 } = {}) {
+      const params = new URLSearchParams({
+        limit: String(limit),
+        offset: String(offset),
+      })
+      return fetchJson(fetchImpl, `${baseUrl}/circuits/${circuitId}/results/1.json?${params}`)
+    },
   }
 }
 

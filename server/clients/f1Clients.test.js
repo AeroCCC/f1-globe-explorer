@@ -17,9 +17,14 @@ describe('F1 external API clients', () => {
 
     await client.getRaceSchedule(2026)
     await client.getCircuitResults(2026, 15)
+    await client.getCircuitWinnerResults('marina_bay')
 
     expect(fetchImpl).toHaveBeenNthCalledWith(1, 'https://example.test/f1/2026.json')
     expect(fetchImpl).toHaveBeenNthCalledWith(2, 'https://example.test/f1/2026/15/results.json')
+    expect(fetchImpl).toHaveBeenNthCalledWith(
+      3,
+      'https://example.test/f1/circuits/marina_bay/results/1.json?limit=100&offset=0',
+    )
   })
 
   it('builds OpenF1 URLs with encoded query parameters', async () => {

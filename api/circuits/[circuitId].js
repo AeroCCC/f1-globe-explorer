@@ -3,7 +3,7 @@ import { getCircuitDetail } from '../../server/services/circuitService.js'
 
 export default function handler(req, res) {
   return handleApiRoute(req, res, ['GET'], async () => {
-    const result = getCircuitDetail(extractCircuitId(req))
+    const result = await getCircuitDetail(extractCircuitId(req))
     sendSuccess(res, result.data, result.meta)
   })
 }

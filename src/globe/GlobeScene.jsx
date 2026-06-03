@@ -10,23 +10,23 @@ import {
 import { GlobeMarker } from './GlobeMarker'
 import { getFocusedGlobeRotation } from './geo'
 
-function Earth({ circuits, selectedCircuitId, hoveredCircuitId, onHoverCircuit, onSelectCircuit }) {
+function Earth({ circuits, selectedCircuitId, focusedCircuitId, hoveredCircuitId, onHoverCircuit, onSelectCircuit }) {
   const earthRef = useRef()
   const cloudsRef = useRef()
   const { size } = useThree()
   const globeScale = getGlobeScaleForViewport(size.width, size.height)
-  const selectedCircuit = useMemo(
-    () => circuits.find((circuit) => circuit.circuitId === selectedCircuitId),
-    [circuits, selectedCircuitId],
+  const focusedCircuit = useMemo(
+    () => circuits.find((circuit) => circuit.circuitId === focusedCircuitId),
+    [circuits, focusedCircuitId],
   )
   const targetRotation = useMemo(() => {
-    if (!selectedCircuit) {
-      return globeConfig.initialRotation
+    if (!focusedCircuit) {
+      return null
     }
 
-    return getFocusedGlobeRotation(selectedCircuit.latitude, selectedCircuit.longitude)
-  }, [selectedCircuit])
-  const [initialRotation] = useState(() => targetRotation)
+    return getFocusedGlobeRotation(focusedCircuit.latitude, focusedCircuit.longitude)
+  }, [focusedCircuit])
+  const [initialRotation] = useState(() => targetRotation ?? globeConfig.initialRotation)
   const [earthMap, normalMap, cloudMap] = useTexture([
     globeConfig.textures.color,
     globeConfig.textures.bump,
@@ -34,7 +34,7 @@ function Earth({ circuits, selectedCircuitId, hoveredCircuitId, onHoverCircuit, 
   ])
 
   useFrame((_, delta) => {
-    if (earthRef.current) {
+    if (earthRef.current && targetRotation) {
       earthRef.current.rotation.x = dampAngle(earthRef.current.rotation.x, targetRotation[0], delta, 3.8)
       earthRef.current.rotation.y = dampAngle(earthRef.current.rotation.y, targetRotation[1], delta, 3.8)
       earthRef.current.rotation.z = dampAngle(earthRef.current.rotation.z, targetRotation[2], delta, 3.8)
@@ -102,12 +102,14 @@ function dampAngle(current, target, delta, lambda) {
 }
 
 function SceneLights() {
+  const lighting = globeConfig.lighting
+
   return (
     <>
-      <ambientLight intensity={0.34} />
-      <hemisphereLight args={['#8fcfff', '#08101f', 1.35]} />
-      <directionalLight position={[4.5, 2.2, 5]} intensity={3.1} />
-      <pointLight position={[-3.5, -2.4, -4]} color="#2f6cff" intensity={0.55} />
+      <ambientLight intensity={lighting.ambientIntensity} />
+      <hemisphereLight args={[lighting.hemisphereSky, lighting.hemisphereGround, lighting.hemisphereIntensity]} />
+      <directionalLight position={lighting.keyPosition} intensity={lighting.keyIntensity} />
+      <pointLight position={lighting.rimPosition} color={lighting.rimColor} intensity={lighting.rimIntensity} />
     </>
   )
 }
@@ -125,7 +127,15 @@ function ResponsiveCamera() {
   return null
 }
 
-export function GlobeScene({ circuits = [], selectedCircuitId, hoveredCircuitId, onHoverCircuit, onSelectCircuit }) {
+export function GlobeScene({
+  circuits = [],
+  selectedCircuitId,
+  focusedCircuitId,
+  hoveredCircuitId,
+  onHoverCircuit,
+  onSelectCircuit,
+  onUserControlGlobe,
+}) {
   return (
     <Canvas
       className="globeCanvas"
@@ -143,6 +153,7 @@ export function GlobeScene({ circuits = [], selectedCircuitId, hoveredCircuitId,
         <Earth
           circuits={circuits}
           selectedCircuitId={selectedCircuitId}
+          focusedCircuitId={focusedCircuitId}
           hoveredCircuitId={hoveredCircuitId}
           onHoverCircuit={onHoverCircuit}
           onSelectCircuit={onSelectCircuit}
@@ -160,6 +171,7 @@ export function GlobeScene({ circuits = [], selectedCircuitId, hoveredCircuitId,
         zoomSpeed={globeConfig.controls.zoomSpeed}
         minDistance={globeConfig.controls.minDistance}
         maxDistance={globeConfig.controls.maxDistance}
+        onStart={onUserControlGlobe}
       />
     </Canvas>
   )

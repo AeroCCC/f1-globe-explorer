@@ -8,9 +8,9 @@ const insightRows = [
   ['策略影响', 'strategyImpact'],
 ]
 
-export function CircuitAiTab({ model }) {
+export function CircuitAiTab({ model, onGenerate }) {
   if (model.status !== 'ready') {
-    return <DrawerStateRenderer model={model} />
+    return <DrawerStateRenderer model={model} onRetry={onGenerate} retryLabel="重试生成" />
   }
 
   return (
@@ -19,6 +19,13 @@ export function CircuitAiTab({ model }) {
         <span>模型：{model.modelName}</span>
         <span>{model.generatedAt}</span>
       </div>
+      {onGenerate ? (
+        <div className="aiActions">
+          <button type="button" onClick={onGenerate} disabled={model.isGenerating}>
+            {model.isGenerating ? '生成中' : '生成 AI 分析'}
+          </button>
+        </div>
+      ) : null}
       <div className="aiInsightList">
         {insightRows.map(([label, key]) => (
           <section key={key}>

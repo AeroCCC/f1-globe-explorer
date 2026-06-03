@@ -18,6 +18,17 @@ export const globeConfig = {
     bump: '/textures/earth-bump.jpg',
     clouds: '/textures/earth-clouds.png',
   },
+  lighting: {
+    ambientIntensity: 0.26,
+    hemisphereSky: '#9ed7ff',
+    hemisphereGround: '#050914',
+    hemisphereIntensity: 1.12,
+    keyPosition: [5.2, 2.8, 4.7],
+    keyIntensity: 3.45,
+    rimPosition: [-4.5, 1.2, -3.6],
+    rimColor: '#5ab8ff',
+    rimIntensity: 0.9,
+  },
 }
 
 export function getCameraPositionForViewport(width, height) {

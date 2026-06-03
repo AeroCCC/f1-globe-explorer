@@ -1,3 +1,5 @@
+import { useState } from 'react'
+import { generateAiInsight } from '../api/aiInsightClient'
 import { CircuitAiTab } from './CircuitAiTab'
 import { CircuitCalendarTab } from './CircuitCalendarTab'
 import { CircuitHistoryTab } from './CircuitHistoryTab'
@@ -9,8 +11,31 @@ function formatLength(value) {
 }
 
 export function CircuitDrawer({ circuit, open, activeTab, onTabChange, onClose }) {
+  const [generatedAiInsight, setGeneratedAiInsight] = useState(null)
+  const [aiGenerationState, setAiGenerationState] = useState({ status: 'idle', message: '' })
+
   if (!circuit) {
     return null
+  }
+
+  const handleGenerateAiInsight = async () => {
+    setAiGenerationState({
+      circuitId: circuit.circuitId,
+      status: 'loading',
+      message: '正在请求 DeepSeek 生成中文赛道分析。',
+    })
+
+    try {
+      const result = await generateAiInsight(circuit.circuitId)
+      setGeneratedAiInsight(result)
+      setAiGenerationState({ circuitId: circuit.circuitId, status: 'ready', message: '' })
+    } catch (error) {
+      setAiGenerationState({
+        circuitId: circuit.circuitId,
+        status: 'error',
+        message: error instanceof Error ? error.message : 'AI 分析生成失败',
+      })
+    }
   }
 
   return (
@@ -79,13 +104,20 @@ export function CircuitDrawer({ circuit, open, activeTab, onTabChange, onClose }
         className="drawerPanel"
         aria-label={`${drawerTabs.find((tab) => tab.id === activeTab)?.label ?? '详情'}面板`}
       >
-        <DrawerTabContent circuit={circuit} activeTab={activeTab} onTabChange={onTabChange} />
+        <DrawerTabContent
+          circuit={circuit}
+          activeTab={activeTab}
+          onTabChange={onTabChange}
+          generatedAiInsight={generatedAiInsight?.circuitId === circuit.circuitId ? generatedAiInsight : null}
+          aiGenerationState={aiGenerationState}
+          onGenerateAiInsight={handleGenerateAiInsight}
+        />
       </section>
     </aside>
   )
 }
 
-function DrawerTabContent({ circuit, activeTab, onTabChange }) {
+function DrawerTabContent({ circuit, activeTab, onTabChange, generatedAiInsight, aiGenerationState, onGenerateAiInsight }) {
   const model = getCircuitTabModel(circuit, activeTab)
 
   if (activeTab === 'overview') {
@@ -101,8 +133,42 @@ function DrawerTabContent({ circuit, activeTab, onTabChange }) {
   }
 
   if (activeTab === 'ai') {
-    return <CircuitAiTab model={model} />
+    return (
+      <CircuitAiTab
+        model={createAiModel(model, circuit.circuitId, generatedAiInsight, aiGenerationState)}
+        onGenerate={onGenerateAiInsight}
+      />
+    )
   }
 
   return <CircuitOverviewTab model={getCircuitTabModel(circuit, 'overview')} onTabChange={onTabChange} />
+}
+
+function createAiModel(baseModel, circuitId, generatedAiInsight, generationState) {
+  if (generatedAiInsight?.circuitId === circuitId) {
+    return {
+      status: 'ready',
+      modelName: generatedAiInsight.modelName,
+      generatedAt: generatedAiInsight.generatedAt,
+      insight: generatedAiInsight.insight,
+    }
+  }
+
+  if (generationState.circuitId === circuitId && generationState.status === 'loading') {
+    return {
+      status: 'loading',
+      title: '正在生成 AI 分析',
+      message: generationState.message,
+    }
+  }
+
+  if (generationState.circuitId === circuitId && generationState.status === 'error') {
+    return {
+      status: 'error',
+      title: '生成失败',
+      message: generationState.message,
+    }
+  }
+
+  return baseModel
 }

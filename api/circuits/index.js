@@ -3,7 +3,7 @@ import { listCircuits } from '../../server/services/circuitService.js'
 
 export default function handler(req, res) {
   return handleApiRoute(req, res, ['GET'], async () => {
-    const result = listCircuits()
+    const result = await listCircuits()
     sendSuccess(res, result.data, result.meta)
   })
 }

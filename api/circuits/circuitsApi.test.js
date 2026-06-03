@@ -111,9 +111,9 @@ describe('circuits serverless API handlers', () => {
     expect(aiInsight.body.data).toMatchObject({
       circuitId: 'marina_bay',
       status: 'ready',
-      cached: true,
+      cached: false,
       insight: {
-        summary: expect.stringContaining('低速街道赛道'),
+        summary: expect.stringContaining('静态赛道资料'),
       },
     })
   })
@@ -135,18 +135,18 @@ describe('circuits serverless API handlers', () => {
     })
   })
 
-  it('keeps AI generation explicit until the DeepSeek phase is implemented', async () => {
+  it('returns a clear error when AI generation is requested without DeepSeek config', async () => {
     const res = await callHandler(aiInsightHandler, {
       method: 'POST',
-      query: { circuitId: 'marina_bay' },
+      query: { circuitId: 'albert_park' },
     })
 
-    expect(res.statusCode).toBe(501)
+    expect(res.statusCode).toBe(503)
     expect(res.body).toMatchObject({
       ok: false,
       error: {
-        code: 'AI_GENERATION_NOT_IMPLEMENTED',
-        message: 'AI 生成将在 DeepSeek 阶段接入',
+        code: 'DEEPSEEK_NOT_CONFIGURED',
+        message: 'DeepSeek API key 未配置',
       },
     })
   })

@@ -20,11 +20,11 @@ export function BottomStatusBar({ circuitCount, selectedCircuit, drawerOpen, onS
         当前选中：<strong>{selectedCircuit?.shortDisplayGrandPrixName ?? '无'}</strong>
       </button>
       <span>
-        数据：<strong>静态种子</strong>
+        数据：<strong>Postgres / DeepSeek</strong>
       </span>
       <span className="connectionStatus">
         <i aria-hidden="true" />
-        状态：<strong>已连接</strong>
+        状态：<strong>在线就绪</strong>
       </span>
     </footer>
   )
