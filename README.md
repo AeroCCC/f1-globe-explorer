@@ -4,6 +4,8 @@
 
 当前版本聚焦 Web 桌面端体验：用户可以在 3D 地球上查看 2026 赛季赛道点位，点击赛道后右侧详情抽屉会更新赛道信息、历史冠军、赛历信息和 AI 赛道工程分析，底部状态栏同步展示赛季、已加载赛道数量、当前选中赛道、数据来源和连接状态。
 
+<img width="2059" height="1229" alt="微信图片_20260603234054_188_17" src="https://github.com/user-attachments/assets/8ad40c2f-cd09-400e-acd0-8c87873cd0c7" />
+
 ## 技术栈
 
 - React 19、Vite 8、React Three Fiber、Three.js。
